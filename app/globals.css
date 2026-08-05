@@ -1,26 +1,136 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --primary: #d32d5a;
+  --secondary: rgb(61, 61, 61);
+  --background: #fffefe;
   --foreground: #171717;
+
+  --font-montserrat: "Montserrat", sans-serif;
+
+  --text-h1: clamp(1.8rem, 1.4rem + 1vw, 3.5rem);
+  --text-h2: clamp(1.75rem, 1.4rem + 1.5vw, 3rem);
+  --text-h3: clamp(1.375rem, 1.2rem + 0.8vw, 2rem);
+  --text-h4: clamp(1.275rem, 1.1rem + 0.4vw, 1.5rem);
+  --text-p: clamp(1rem, 0.9rem + 0.35vw, 1.25rem);
+
+  --container-max-width: 1280px;
+  --container-padding: clamp(1rem, 3vw, 3rem);
+  --section-spacing: clamp(4rem, 8vw, 8rem);
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #dbdbdb;
+  --sidebar-border: #bc0a0a;
+  --sidebar-accent: #f4f4f5;
+  --sidebar-accent-foreground: #171717;
+  --sidebar-ring: #ffdbe5;
 }
 
-@theme inline {
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-sans: var(--font-montserrat);
+
+  --text-h1: var(--text-h1);
+  --text-h2: var(--text-h2);
+  --text-h3: var(--text-h3);
+  --text-h4: var(--text-h4);
+  --text-body: var(--text-p);
+
+  --container-max: var(--container-max-width);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-montserrat);
+    font-size: var(--text-p);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    font-family: var(--font-montserrat);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-size: var(--text-h1);
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+  }
+
+  h3 {
+    font-size: var(--text-h3);
+  }
+  h4 {
+    font-size: var(--text-h4);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--text-p);
+    line-height: 1.6;
+    color: var(--color-secondary);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  .container {
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+  }
+
+  section {
+    padding-block: var(--section-spacing);
+  }
+
+  ::selection {
+    background: var(--primary);
+    color: #ffffff;
+  }
 }
