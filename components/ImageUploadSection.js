@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import Uploader from "./Uploader";
 import UploadPreview from "./UploadPreview";
 
-function ImageUploadSection({ onPaletteReady }) {
+function ImageUploadSection({ onPaletteReady, setPalette }) {
   const [file, setFile] = useState(null); //Getting the File it self
   async function sendUpload(file) {
     const fileUpload = new FormData();
@@ -17,11 +17,19 @@ function ImageUploadSection({ onPaletteReady }) {
     onPaletteReady(data.palette);
     return data;
   }
+  function handleDelete() {
+    setPalette(null);
+    setFile(null);
+  }
 
   return (
-    <section className={`w-full  grid grid-rows-1 place-items-center gap-4`}>
+    <section className={`w-full grid grid-rows-1 place-items-center gap-4 p-0`}>
       {file ? (
-        <UploadPreview file={file} onDelete={setFile} sendUpload={sendUpload} />
+        <UploadPreview
+          file={file}
+          onDelete={handleDelete}
+          sendUpload={sendUpload}
+        />
       ) : (
         <Uploader onUpload={setFile} />
       )}

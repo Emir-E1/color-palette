@@ -6,6 +6,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
+import Header from "@/components/Header";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -17,12 +18,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <body
-        className={`${montserrat.variable} min-h-screen  bg-background text-foreground overflow-hidden`}
+        className={`${montserrat.variable} min-h-screen  bg-background text-foreground `}
       >
         <SidebarProvider>
           <AppSidebar />
           <SidebarInset>
-            <SidebarTrigger />
+            <Header />
             {children}
           </SidebarInset>
         </SidebarProvider>

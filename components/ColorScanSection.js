@@ -9,7 +9,7 @@ function ColorScanSection() {
 
   return (
     <>
-      <ImageUploadSection onPaletteReady={setPalette} />
+      <ImageUploadSection onPaletteReady={setPalette} setPalette={setPalette} />
       {palette && <PaletteSection palette={palette} />}
     </>
   );
