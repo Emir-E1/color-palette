@@ -23,7 +23,7 @@ function Uploader({ onUpload }) {
         className="flex flex-col justify-center items-center cursor-pointer "
         onClick={() => inputRef.current.click()}
       >
-        <Upload size={40} />
+        <Upload size={40} color="#d32d5a" />
         <div className="text-center cursor-pointer">
           <h4>Uplaod it here</h4>
           <p>PNG JPEG GIF</p>

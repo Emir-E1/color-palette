@@ -4,8 +4,9 @@ import { Suspense, useState } from "react";
 import Uploader from "./Uploader";
 import UploadPreview from "./UploadPreview";
 
-function ImageUploadSection({ onPaletteReady, setPalette }) {
+function ImageUploadSection({ setPalette }) {
   const [file, setFile] = useState(null); //Getting the File it self
+
   async function sendUpload(file) {
     const fileUpload = new FormData();
     fileUpload.append("imageUpload", file);
@@ -14,7 +15,7 @@ function ImageUploadSection({ onPaletteReady, setPalette }) {
       body: fileUpload,
     });
     const data = await res.json();
-    onPaletteReady(data.palette);
+    setPalette(data.palette);
     return data;
   }
   function handleDelete() {

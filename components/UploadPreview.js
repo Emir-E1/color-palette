@@ -1,22 +1,21 @@
 "use client";
 
+import { useImageContext } from "@/context/ImageContext";
 import { Scan, Trash, Upload } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 function UploadPreview({ file, onDelete, sendUpload }) {
-  const [fileLink, setFileLink] = useState(null);
-
+  const { preview, setPreview } = useImageContext();
   useEffect(() => {
     const url = URL.createObjectURL(file);
-    setFileLink(url);
+    setPreview(url);
 
     return () => {
       URL.revokeObjectURL(url);
     };
   }, [file]);
-
-  if (!fileLink) return null;
+  if (!preview) return null;
 
   const buttonShadow = {
     boxShadow: `
@@ -29,7 +28,7 @@ function UploadPreview({ file, onDelete, sendUpload }) {
   return (
     <div className="relative max-w-full overflow-hidden rounded-4xl border-2 border-gray-500">
       <img
-        src={fileLink}
+        src={preview}
         alt="Preview"
         className=" block max-h-[400px] max-w-full rounded-4xl object-contain "
       />

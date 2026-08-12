@@ -1,6 +1,8 @@
+import ColorPickSection from "@/components/ColorPickSection";
 import ColorScanSection from "@/components/ColorScanSection";
 
 import PageHeader from "@/components/PageHeader";
+import { ImageContextProvider } from "@/context/ImageContext";
 
 function page() {
   return (
@@ -9,7 +11,10 @@ function page() {
         title={"Extrcat colors from your image"}
         description={"Upload an image and discover the dominant colors"}
       />
-      <ColorScanSection />
+      <ImageContextProvider>
+        <ColorScanSection />
+        <ColorPickSection />
+      </ImageContextProvider>
     </div>
   );
 }
