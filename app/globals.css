@@ -4,7 +4,7 @@
   --primary: #d32d5a;
   --secondary: rgb(61, 61, 61);
   --background: #fbfbfb;
-  --marketing: #f0ccef;
+  --marketing: #fff5f9;
   /* --background: #ff0000;*/
   --foreground: #171717;
 
@@ -32,7 +32,7 @@
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-background: var(--background);
-  --color-marketing:var(--marketing)
+  --color-marketing: var(--marketing);
   --color-foreground: var(--foreground);
 
   --font-sans: var(--font-montserrat);

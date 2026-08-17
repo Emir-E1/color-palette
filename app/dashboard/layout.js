@@ -4,58 +4,23 @@ import Header from "@/components/Header";
 
 export default function DashboardLayout({ children }) {
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-marketing">
-      {/* Premium background */}
+    <div className="relative min-h-screen w-full overflow-hidden bg-background">
+      {/* Fond app */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        {/* Soft pink glow */}
+        {/* Dot grid subtil */}
         <div
           className="absolute inset-0"
           style={{
-            background: `
-              radial-gradient(
-                circle at 50% 0%,
-                rgba(255, 255, 255, 0.9) 0%,
-                rgba(255, 255, 255, 0.45) 20%,
-                transparent 55%
-              )
-            `,
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(61, 61, 61, 0.1) 1.5px, transparent 0)`,
+            backgroundSize: "28px 28px",
           }}
         />
 
-        {/* Grid */}
+        {/* Souffle primary en haut */}
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: `
-              linear-gradient(
-                rgba(214, 45, 126, 0.13) 1px,
-                transparent 1px
-              ),
-              linear-gradient(
-                90deg,
-                rgba(214, 45, 126, 0.13) 1px,
-                transparent 1px
-              )
-            `,
-            backgroundSize: "48px 48px",
-            maskImage:
-              "radial-gradient(ellipse 80% 70% at 50% 20%, black 20%, transparent 100%)",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 80% 70% at 50% 20%, black 20%, transparent 100%)",
-          }}
-        />
-
-        {/* Bottom fade */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              linear-gradient(
-                to bottom,
-                transparent 55%,
-                rgba(240, 204, 239, 0.8) 100%
-              )
-            `,
+            background: `radial-gradient(ellipse 55% 35% at 50% -5%, rgba(211, 45, 90, 0.06), transparent 65%)`,
           }}
         />
       </div>
@@ -65,7 +30,7 @@ export default function DashboardLayout({ children }) {
         <SidebarProvider>
           <AppSidebar />
 
-          <SidebarInset>
+          <SidebarInset style={{ backgroundColor: "transparent" }}>
             <Header />
             {children}
           </SidebarInset>

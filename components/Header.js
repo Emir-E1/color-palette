@@ -3,7 +3,7 @@ import { SidebarTrigger } from "./ui/sidebar";
 
 function Header() {
   return (
-    <header className="flex w-full p-4 items-center justify-between border-b-1 shadow-2xs border-b-secondary/10">
+    <header className="flex w-full p-4 items-center bg-background justify-between border-b-1 shadow-2xs border-b-secondary/10">
       <SidebarTrigger className="bg-primary/15 p-2 rounded-full text-primary" />
       <div className="flex gap-4 items-center ">
         <Sun />
