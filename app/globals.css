@@ -3,7 +3,9 @@
 :root {
   --primary: #d32d5a;
   --secondary: rgb(61, 61, 61);
-  --background: #fffefe;
+  --background: #fbfbfb;
+  --marketing: #f0ccef;
+  /* --background: #ff0000;*/
   --foreground: #171717;
 
   --font-montserrat: "Montserrat", sans-serif;
@@ -30,6 +32,7 @@
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-background: var(--background);
+  --color-marketing:var(--marketing)
   --color-foreground: var(--foreground);
 
   --font-sans: var(--font-montserrat);

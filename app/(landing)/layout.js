@@ -1,8 +1,6 @@
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import AppSidebar from "@/components/AppSidebar";
-import Header from "@/components/Header";
+import NavBar from "@/components/NavBar";
 
-export default function DashboardLayout({ children }) {
+export default function Landinglayout({ children }) {
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-marketing">
       {/* Premium background */}
@@ -61,15 +59,9 @@ export default function DashboardLayout({ children }) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full">
-        <SidebarProvider>
-          <AppSidebar />
-
-          <SidebarInset>
-            <Header />
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
+      <div className="w-full relative z-10">
+        <NavBar />
+        {children}
       </div>
     </div>
   );

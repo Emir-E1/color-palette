@@ -1,8 +1,6 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import { useImageContext } from "@/context/ImageContext";
-import { rgbToHex } from "@/_utils/rgbToHex";
-import PaletteSection from "./PaletteSection";
 
 const DOT_SIZE = 40;
 
@@ -10,14 +8,13 @@ function ColorPickSection() {
   const { preview, palette } = useImageContext();
 
   const wrapperRef = useRef(null);
-  const canvasRef = useRef(null); // canvas caché, juste pour lire les pixels
+  const canvasRef = useRef(null);
   const draggingName = useRef(null);
   const timerRef = useRef(null);
 
   const [positions, setPositions] = useState({});
   const [customPalette, setCustomPalette] = useState(null);
 
-  // --- Init : dessine l'image dans le canvas caché + place les points au centre ---
   useEffect(() => {
     if (!palette) return;
     setCustomPalette(palette);
@@ -37,7 +34,6 @@ function ColorPickSection() {
     canvas.getContext("2d").drawImage(img, 0, 0);
   };
 
-  // --- Lit la couleur du pixel à une position % donnée ---
   const getColorAt = (xPct, yPct) => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
@@ -47,7 +43,6 @@ function ColorPickSection() {
     return [r, g, b];
   };
 
-  // --- Drag handlers ---
   const handleDown = (name) => (e) => {
     e.preventDefault();
     draggingName.current = name;
@@ -66,10 +61,8 @@ function ColorPickSection() {
     xPct = Math.min(100, Math.max(0, xPct));
     yPct = Math.min(100, Math.max(0, yPct));
 
-    // déplacement visuel immédiat
     setPositions((prev) => ({ ...prev, [name]: { x: xPct, y: yPct } }));
 
-    // couleur mise à jour après 1s d'inactivité (debounce)
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       const rgb = getColorAt(xPct, yPct);
@@ -85,7 +78,6 @@ function ColorPickSection() {
 
   return (
     <div className="w-full flex flex-col items-center gap-8">
-      {/* Image + points draggables */}
       <div
         ref={wrapperRef}
         className="relative inline-block select-none"
@@ -124,7 +116,6 @@ function ColorPickSection() {
 
         <canvas ref={canvasRef} className="hidden" />
       </div>
-      {customPalette && <PaletteSection palette={customPalette} />}
     </div>
   );
 }

@@ -28,7 +28,7 @@ function AppSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="px-3 py-4">
+      <SidebarHeader className="px-3 py-4 bg-transparent">
         <div className="flex w-full items-center justify-center gap-2">
           <Logo />
         </div>
