@@ -59,10 +59,7 @@ export default function Landinglayout({ children }) {
       </div>
 
       {/* Content */}
-      <div className="w-full relative z-10">
-        <NavBar />
-        {children}
-      </div>
+      <div className="w-full relative z-10">{children}</div>
     </div>
   );
 }

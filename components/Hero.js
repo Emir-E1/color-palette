@@ -23,7 +23,7 @@ export default function Hero() {
         {/* Boutons */}
         <div className="mt-8 flex w-full flex-col justify-center gap-4 sm:w-auto sm:flex-row lg:justify-start">
           <Link
-            href="/signup"
+            href="/dashboard"
             className="rounded-md bg-primary px-7 py-3.5 text-center text-base font-medium text-white transition-opacity hover:opacity-90"
           >
             Get Started Free

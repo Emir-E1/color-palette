@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useEffect } from "react";
 import { useImageContext } from "@/context/ImageContext";
+import PaletteSection from "./PaletteSection";
 
 const DOT_SIZE = 40;
 
@@ -116,6 +117,7 @@ function ColorPickSection() {
 
         <canvas ref={canvasRef} className="hidden" />
       </div>
+      {customPalette && <PaletteSection palette={customPalette} />}
     </div>
   );
 }
