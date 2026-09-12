@@ -10,9 +10,10 @@ import {
   FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+
+import { signInAction } from "@/lib/action";
 
 export function LoginForm({ className, ...props }) {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -23,7 +24,6 @@ export function LoginForm({ className, ...props }) {
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-8 md:p-12">
             <FieldGroup className="gap-6">
-              {/* Titre dynamique */}
               <div className="flex flex-col items-center gap-2 text-center pb-2">
                 <h1 className="text-3xl font-bold">
                   {isSignUp ? "Create account" : "Welcome back"}
@@ -35,7 +35,6 @@ export function LoginForm({ className, ...props }) {
                 </p>
               </div>
 
-              {/* Champ Nom (uniquement si Inscription) */}
               {isSignUp && (
                 <Field>
                   <FieldLabel htmlFor="name">Full Name</FieldLabel>
@@ -48,7 +47,6 @@ export function LoginForm({ className, ...props }) {
                 </Field>
               )}
 
-              {/* Email */}
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
@@ -60,7 +58,6 @@ export function LoginForm({ className, ...props }) {
                 />
               </Field>
 
-              {/* Password */}
               <Field>
                 <div className="flex items-center justify-between">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -81,18 +78,23 @@ export function LoginForm({ className, ...props }) {
                 />
               </Field>
 
-              {/* Bouton Submit principal */}
               <Field>
                 <Button type="submit" className="h-11 w-full text-base">
                   {isSignUp ? "Sign up" : "Login"}
                 </Button>
               </Field>
 
-              {/* Bouton Google (conservé pour les deux modes) */}
               <Field className="grid grid-cols-1 gap-4">
-                <Button variant="outline" type="button" className="h-11">
+                <Button
+                  variant="outline"
+                  type="button"
+                  className="h-11"
+                  onClick={async () => {
+                    await signInAction();
+                  }}
+                >
                   <svg
-                    className="h-5 w-5"
+                    className="h-5 w-5 mr-2"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                   >
@@ -101,13 +103,12 @@ export function LoginForm({ className, ...props }) {
                       fill="currentColor"
                     />
                   </svg>
-                  <span className="sr-only">
+                  <span>
                     {isSignUp ? "Sign up with Google" : "Login with Google"}
                   </span>
                 </Button>
               </Field>
 
-              {/* Bouton pour switcher entre Login et Sign Up */}
               <FieldDescription className="text-center">
                 {isSignUp
                   ? "Already have an account?"
@@ -123,10 +124,9 @@ export function LoginForm({ className, ...props }) {
             </FieldGroup>
           </form>
 
-          {/* Image à droite */}
           <div className="relative hidden bg-muted md:block">
             <img
-              src="/mockup.png"
+              src="/image.png"
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
             />
