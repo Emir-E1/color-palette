@@ -8,6 +8,7 @@ import Logo from "./Logo";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -65,6 +66,7 @@ function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>Footer for profiles</SidebarFooter>
     </Sidebar>
   );
 }
