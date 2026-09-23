@@ -1,15 +1,30 @@
-import { useState } from "react";
-import { Pipette } from "lucide-react";
+"use client";
+
+import { useEffect, useState, useTransition } from "react";
+
+import { Heart, Pipette } from "lucide-react";
+
 import { rgbToHex } from "@/_utils/rgbToHex";
 
-function PaletteSection({ palette }) {
+import { favoriteAction } from "@/lib/action";
+
+function PaletteSection({ palette, paletteId, initialIsFavorite = false }) {
   const [copied, setCopied] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+  const [error, setError] = useState(null);
+  const [isPending, startTransition] = useTransition();
+
+  // Synchroniser l'état initial si la palette ou ses données changent
+  useEffect(() => {
+    setIsFavorite(initialIsFavorite);
+  }, [initialIsFavorite, paletteId]);
 
   if (!palette) return null;
 
   const handleCopy = async (hex, name) => {
     try {
       await navigator.clipboard.writeText(hex);
+
       setCopied(name);
 
       setTimeout(() => {
@@ -20,42 +35,118 @@ function PaletteSection({ palette }) {
     }
   };
 
+  const handleFavorite = () => {
+    if (!paletteId || isPending || isFavorite) {
+      return;
+    }
+    setError(null);
+
+    startTransition(async () => {
+      try {
+        const result = await favoriteAction(paletteId);
+
+        if (!result?.success) {
+          setError(result?.error || "Impossible d'ajouter aux favoris.");
+          return;
+        }
+
+        setIsFavorite(true);
+      } catch (error) {
+        console.error("Favorite error:", error);
+        setError("Une erreur est survenue.");
+      }
+    });
+    console.log("paletteId envoyé :", paletteId);
+  };
+
   return (
     <div className="flex flex-col gap-4">
-      <h2>Dominant Palette </h2>
-      <div className="flex items-center justify-center gap-4 overflow-scroll md:overflow-auto p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-lg font-semibold">Dominant Palette</h2>
+
+        {/* Favorite Button */}
+        <button
+          type="button"
+          onClick={handleFavorite}
+          disabled={isPending || isFavorite || !paletteId}
+          className={`
+            flex items-center justify-center
+            w-10 h-10
+            rounded-full
+            border
+            transition-all duration-200
+            ${
+              isFavorite
+                ? "bg-red-50 border-red-200 text-red-500"
+                : "bg-white border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200 hover:bg-red-50"
+            }
+            ${isPending ? "opacity-50 cursor-wait" : "active:scale-95"}
+            disabled:cursor-not-allowed
+          `}
+          aria-label={
+            isFavorite
+              ? "Palette ajoutée aux favoris"
+              : "Ajouter la palette aux favoris"
+          }
+          title={
+            isFavorite
+              ? "Ajoutée aux favoris"
+              : isPending
+              ? "Ajout en cours..."
+              : "Ajouter aux favoris"
+          }
+        >
+          <Heart
+            size={20}
+            strokeWidth={2}
+            fill={isFavorite ? "currentColor" : "none"}
+          />
+        </button>
+      </div>
+
+      {/* Error message */}
+      {error && (
+        <p role="alert" className="text-sm text-red-500">
+          {error}
+        </p>
+      )}
+
+      {/* Palette */}
+      <div className="flex items-center justify-center gap-4 overflow-x-auto md:overflow-visible p-4">
         {Object.entries(palette).map(([name, swatch]) => {
           const [r, g, b] = swatch.rgb;
           const hex = rgbToHex(r, g, b);
 
           return (
-            <div key={name} className="">
+            <div key={name} className="shrink-0">
               <div
                 className="relative w-20 h-20 md:w-30 md:h-30 rounded-full flex items-end p-2"
                 style={{
                   backgroundColor: `rgb(${r}, ${g}, ${b})`,
                   boxShadow: `
-                  0 12px 24px -4px rgba(0,0,0,0.15),
-                  0 6px 12px -4px rgba(0,0,0,0.1),
-                  inset 0 1px 1px rgba(255,255,255,0.4)
-                `,
+                    0 12px 24px -4px rgba(0,0,0,0.15),
+                    0 6px 12px -4px rgba(0,0,0,0.1),
+                    inset 0 1px 1px rgba(255,255,255,0.4)
+                  `,
                 }}
               >
+                {/* Copy Button */}
                 <button
                   type="button"
                   onClick={() => handleCopy(hex, name)}
                   className="
-                  absolute top-2 right-2
-                  flex items-center justify-center
-                  w-7 h-7 md:w-8 md:h-8
-                  rounded-full
-                  bg-white/80 backdrop-blur-sm
-                  text-black/70
-                  shadow-sm
-                  transition-all duration-200
-                  hover:bg-white hover:text-black hover:scale-105
-                  active:scale-95
-                "
+                    absolute top-2 right-2
+                    flex items-center justify-center
+                    w-7 h-7 md:w-8 md:h-8
+                    rounded-full
+                    bg-white/80 backdrop-blur-sm
+                    text-black/70
+                    shadow-sm
+                    transition-all duration-200
+                    hover:bg-white hover:text-black hover:scale-105
+                    active:scale-95
+                  "
                   aria-label={`Copier ${hex}`}
                   title={copied === name ? "Copié !" : `Copier ${hex}`}
                 >
@@ -66,6 +157,7 @@ function PaletteSection({ palette }) {
                   />
                 </button>
 
+                {/* HEX */}
                 <span className="text-xs text-white bg-black/40 px-1 rounded">
                   {copied === name ? "Copié !" : hex}
                 </span>

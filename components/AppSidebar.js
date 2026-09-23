@@ -24,9 +24,8 @@ const navItems = [
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
-function AppSidebar() {
+function AppSidebar({ session }) {
   const pathname = usePathname();
-
   return (
     <Sidebar>
       <SidebarHeader className="px-3 py-4 bg-transparent">
@@ -66,7 +65,7 @@ function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>Footer for profiles</SidebarFooter>
+      <SidebarFooter>you are {session.user.name}</SidebarFooter>
     </Sidebar>
   );
 }
