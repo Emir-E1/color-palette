@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-
 import { Heart, Pipette } from "lucide-react";
 
 import { rgbToHex } from "@/_utils/rgbToHex";
-
 import { favoriteAction } from "@/lib/action";
 
 function PaletteSection({ palette, paletteId, initialIsFavorite = false }) {
@@ -14,13 +12,13 @@ function PaletteSection({ palette, paletteId, initialIsFavorite = false }) {
   const [error, setError] = useState(null);
   const [isPending, startTransition] = useTransition();
 
-  // Synchroniser l'état initial si la palette ou ses données changent
   useEffect(() => {
     setIsFavorite(initialIsFavorite);
   }, [initialIsFavorite, paletteId]);
 
-  if (!palette) return null;
-
+  if (!palette) {
+    return null;
+  }
   const handleCopy = async (hex, name) => {
     try {
       await navigator.clipboard.writeText(hex);
@@ -34,28 +32,27 @@ function PaletteSection({ palette, paletteId, initialIsFavorite = false }) {
       console.error("Impossible de copier la couleur :", error);
     }
   };
-
   const handleFavorite = () => {
-    if (!paletteId || isPending || isFavorite) {
+    if (!paletteId || isPending) {
       return;
     }
     setError(null);
-
     startTransition(async () => {
       try {
         const result = await favoriteAction(paletteId);
-
         if (!result?.success) {
-          setError(result?.error || "Impossible d'ajouter aux favoris.");
+          setError(result?.error || "Impossible de modifier les favoris.");
+
           return;
         }
-
-        setIsFavorite(true);
+        setIsFavorite(result.isFavorite);
       } catch (error) {
         console.error("Favorite error:", error);
+
         setError("Une erreur est survenue.");
       }
     });
+
     console.log("paletteId envoyé :", paletteId);
   };
 
@@ -64,45 +61,6 @@ function PaletteSection({ palette, paletteId, initialIsFavorite = false }) {
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-lg font-semibold">Dominant Palette</h2>
-
-        {/* Favorite Button */}
-        <button
-          type="button"
-          onClick={handleFavorite}
-          disabled={isPending || isFavorite || !paletteId}
-          className={`
-            flex items-center justify-center
-            w-10 h-10
-            rounded-full
-            border
-            transition-all duration-200
-            ${
-              isFavorite
-                ? "bg-red-50 border-red-200 text-red-500"
-                : "bg-white border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200 hover:bg-red-50"
-            }
-            ${isPending ? "opacity-50 cursor-wait" : "active:scale-95"}
-            disabled:cursor-not-allowed
-          `}
-          aria-label={
-            isFavorite
-              ? "Palette ajoutée aux favoris"
-              : "Ajouter la palette aux favoris"
-          }
-          title={
-            isFavorite
-              ? "Ajoutée aux favoris"
-              : isPending
-              ? "Ajout en cours..."
-              : "Ajouter aux favoris"
-          }
-        >
-          <Heart
-            size={20}
-            strokeWidth={2}
-            fill={isFavorite ? "currentColor" : "none"}
-          />
-        </button>
       </div>
 
       {/* Error message */}
@@ -113,7 +71,10 @@ function PaletteSection({ palette, paletteId, initialIsFavorite = false }) {
       )}
 
       {/* Palette */}
+
       <div className="flex items-center justify-center gap-4 overflow-x-auto md:overflow-visible p-4">
+        {/* Favorite Button */}
+
         {Object.entries(palette).map(([name, swatch]) => {
           const [r, g, b] = swatch.rgb;
           const hex = rgbToHex(r, g, b);
@@ -165,6 +126,46 @@ function PaletteSection({ palette, paletteId, initialIsFavorite = false }) {
             </div>
           );
         })}
+        <button
+          type="button"
+          onClick={handleFavorite}
+          disabled={isPending || !paletteId}
+          className={`
+            flex items-center justify-center
+            w-14 h-14
+            rounded-full
+            border
+            transition-all duration-200
+
+            ${
+              isFavorite
+                ? "bg-red-50 border-red-200 text-red-500"
+                : "bg-white border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200 hover:bg-red-50"
+            }
+
+            ${isPending ? "opacity-50 cursor-wait" : "active:scale-95"}
+
+            disabled:cursor-not-allowed
+          `}
+          aria-label={
+            isFavorite
+              ? "Retirer la palette des favoris"
+              : "Ajouter la palette aux favoris"
+          }
+          title={
+            isPending
+              ? "Modification en cours..."
+              : isFavorite
+              ? "Retirer des favoris"
+              : "Ajouter aux favoris"
+          }
+        >
+          <Heart
+            size={30}
+            strokeWidth={2}
+            fill={isFavorite ? "currentColor" : "none"}
+          />
+        </button>
       </div>
     </div>
   );

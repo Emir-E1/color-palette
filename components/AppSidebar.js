@@ -20,7 +20,7 @@ import {
 const navItems = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "History", url: "/history", icon: History },
-  { title: "Favorites", url: "/favorite", icon: Heart },
+  { title: "Favorites", url: "dashboard/favorite", icon: Heart },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
@@ -65,7 +65,7 @@ function AppSidebar({ session }) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>you are {session.user.name}</SidebarFooter>
+      <SidebarFooter>you are {session?.user.name}</SidebarFooter>
     </Sidebar>
   );
 }
