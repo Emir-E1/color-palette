@@ -8,36 +8,38 @@ export default async function DashboardLayout({ children }) {
   const session = await auth();
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background">
-      <div className="pointer-events-none fixed inset-0 z-0">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgba(61, 61, 61, 0.1) 1.5px, transparent 0)",
-            backgroundSize: "28px 28px",
-          }}
-        />
+    <SidebarProvider style={{ "--sidebar-width": "18rem" }}>
+      <AppSidebar session={session} />
+      <SidebarInset className="relative bg-stone-50">
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `
+                linear-gradient(
+                  rgba(214, 45, 126, 0.12) 1px,
+                  transparent 1px
+                ),
+                linear-gradient(
+                  90deg,
+                  rgba(214, 45, 126, 0.12) 1px,
+                  transparent 1px
+                )
+              `,
+              backgroundSize: "48px 48px",
+              maskImage:
+                "radial-gradient(circle at 50% 15%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, transparent 85%)",
+              WebkitMaskImage:
+                "radial-gradient(circle at 50% 15%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, transparent 85%)",
+            }}
+          />
+        </div>
 
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 55% 35% at 50% -5%, rgba(211, 45, 90, 0.06), transparent 65%)",
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 w-full">
-        <SidebarProvider>
-          <AppSidebar session={session} />
-
-          <SidebarInset style={{ backgroundColor: "transparent" }}>
-            <Header />
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
-      </div>
-    </div>
+        <div className="relative z-10 flex min-h-screen flex-col">
+          <Header />
+          <main className="flex-1">{children}</main>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

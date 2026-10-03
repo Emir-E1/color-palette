@@ -10,7 +10,6 @@ function ImageUploadSection({ setPalette, setPaletteId }) {
 
   async function sendUpload(file) {
     const fileUpload = new FormData();
-
     fileUpload.append("imageUpload", file);
 
     const res = await fetch("/api/colorscan/upload", {
@@ -20,10 +19,7 @@ function ImageUploadSection({ setPalette, setPaletteId }) {
 
     const data = await res.json();
 
-    // Enregistre les couleurs dans le contexte
     setPalette(data.palette);
-
-    // Enregistre l'ID MongoDB de la palette
     setPaletteId(data.paletteId);
 
     return data;
@@ -36,7 +32,7 @@ function ImageUploadSection({ setPalette, setPaletteId }) {
   }
 
   return (
-    <section className="w-full grid grid-rows-1 place-items-center gap-4 p-0">
+    <div className="flex w-full flex-col items-center gap-4">
       {file ? (
         <UploadPreview
           file={file}
@@ -46,7 +42,7 @@ function ImageUploadSection({ setPalette, setPaletteId }) {
       ) : (
         <Uploader onUpload={setFile} />
       )}
-    </section>
+    </div>
   );
 }
 

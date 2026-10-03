@@ -1,12 +1,21 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { Heart, Pipette } from "lucide-react";
+import { Check, Copy, Heart } from "lucide-react";
 
 import { rgbToHex } from "@/_utils/rgbToHex";
 import { favoriteAction } from "@/lib/action";
 
-function PaletteSection({ palette, paletteId, initialIsFavorite = false }) {
+// Lisible sur n'importe quelle couleur : icône sombre sur fond clair, claire sur fond foncé
+const isLight = ([r, g, b]) => (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6;
+
+function PaletteSection({
+  palette,
+  paletteId,
+  initialIsFavorite = false,
+  title = "Dominant palette",
+  showFavorite = true,
+}) {
   const [copied, setCopied] = useState(null);
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [error, setError] = useState(null);
@@ -16,156 +25,120 @@ function PaletteSection({ palette, paletteId, initialIsFavorite = false }) {
     setIsFavorite(initialIsFavorite);
   }, [initialIsFavorite, paletteId]);
 
-  if (!palette) {
-    return null;
-  }
+  if (!palette) return null;
+
+  const swatches = Object.entries(palette);
+
   const handleCopy = async (hex, name) => {
     try {
       await navigator.clipboard.writeText(hex);
-
       setCopied(name);
-
-      setTimeout(() => {
-        setCopied(null);
-      }, 1500);
+      setTimeout(() => setCopied(null), 1500);
     } catch (error) {
       console.error("Impossible de copier la couleur :", error);
     }
   };
+
   const handleFavorite = () => {
-    if (!paletteId || isPending) {
-      return;
-    }
+    if (!paletteId || isPending) return;
     setError(null);
     startTransition(async () => {
       try {
         const result = await favoriteAction(paletteId);
         if (!result?.success) {
           setError(result?.error || "Impossible de modifier les favoris.");
-
           return;
         }
         setIsFavorite(result.isFavorite);
       } catch (error) {
         console.error("Favorite error:", error);
-
         setError("Une erreur est survenue.");
       }
     });
-
-    console.log("paletteId envoyé :", paletteId);
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold">Dominant Palette</h2>
+    <div className="flex flex-col gap-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-col gap-0.5">
+          <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
+          <p className="text-sm text-stone-500">
+            Click a color to copy its hex code.
+          </p>
+        </div>
+
+        {showFavorite && (
+          <button
+            type="button"
+            onClick={handleFavorite}
+            disabled={isPending || !paletteId}
+            aria-pressed={isFavorite}
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition
+              focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900
+              disabled:cursor-not-allowed disabled:opacity-50
+              ${
+                isFavorite
+                  ? "border-red-200 bg-red-50 text-red-600"
+                  : "border-stone-300 bg-white text-stone-700 hover:border-stone-400 hover:bg-stone-50"
+              }`}
+          >
+            <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
+            {isPending ? "Saving…" : isFavorite ? "Saved" : "Save palette"}
+          </button>
+        )}
       </div>
 
-      {/* Error message */}
       {error && (
-        <p role="alert" className="text-sm text-red-500">
+        <p
+          role="alert"
+          className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"
+        >
           {error}
         </p>
       )}
 
-      {/* Palette */}
-
-      <div className="flex items-center justify-center gap-4 overflow-x-auto md:overflow-visible p-4">
-        {/* Favorite Button */}
-
-        {Object.entries(palette).map(([name, swatch]) => {
+      {/* Les couleurs forment une seule bande : c'est l'élément fort de la page */}
+      <div className="flex w-full">
+        {swatches.map(([name, swatch], i) => {
           const [r, g, b] = swatch.rgb;
           const hex = rgbToHex(r, g, b);
+          const light = isLight(swatch.rgb);
+          const isCopied = copied === name;
+          const radius =
+            (i === 0 ? "rounded-l-2xl " : "") +
+            (i === swatches.length - 1 ? "rounded-r-2xl" : "");
 
           return (
-            <div key={name} className="shrink-0">
-              <div
-                className="relative w-20 h-20 md:w-30 md:h-30 rounded-full flex items-end p-2"
-                style={{
-                  backgroundColor: `rgb(${r}, ${g}, ${b})`,
-                  boxShadow: `
-                    0 12px 24px -4px rgba(0,0,0,0.15),
-                    0 6px 12px -4px rgba(0,0,0,0.1),
-                    inset 0 1px 1px rgba(255,255,255,0.4)
-                  `,
-                }}
+            <button
+              key={name}
+              type="button"
+              onClick={() => handleCopy(hex, name)}
+              aria-label={`Copy ${hex}`}
+              className="group flex min-w-0 flex-1 flex-col gap-2 focus-visible:outline-none"
+            >
+              <span
+                className={`flex h-32 items-start justify-end p-2 transition-[flex-grow] md:h-48 md:p-3
+                  group-focus-visible:ring-2 group-focus-visible:ring-stone-900 group-focus-visible:ring-inset ${radius}`}
+                style={{ backgroundColor: `rgb(${r}, ${g}, ${b})` }}
               >
-                {/* Copy Button */}
-                <button
-                  type="button"
-                  onClick={() => handleCopy(hex, name)}
-                  className="
-                    absolute top-2 right-2
-                    flex items-center justify-center
-                    w-7 h-7 md:w-8 md:h-8
-                    rounded-full
-                    bg-white/80 backdrop-blur-sm
-                    text-black/70
-                    shadow-sm
-                    transition-all duration-200
-                    hover:bg-white hover:text-black hover:scale-105
-                    active:scale-95
-                  "
-                  aria-label={`Copier ${hex}`}
-                  title={copied === name ? "Copié !" : `Copier ${hex}`}
+                <span
+                  className={`rounded-full p-1.5 opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100 ${
+                    isCopied ? "opacity-100" : ""
+                  } ${
+                    light
+                      ? "bg-black/10 text-black/70"
+                      : "bg-white/20 text-white"
+                  }`}
                 >
-                  <Pipette
-                    size={14}
-                    strokeWidth={2}
-                    className="md:w-4 md:h-4"
-                  />
-                </button>
-
-                {/* HEX */}
-                <span className="text-xs text-white bg-black/40 px-1 rounded">
-                  {copied === name ? "Copié !" : hex}
+                  {isCopied ? <Check size={14} /> : <Copy size={14} />}
                 </span>
-              </div>
-            </div>
+              </span>
+              <span className="truncate text-center text-xs font-medium tabular-nums text-stone-600 md:text-sm">
+                {isCopied ? "Copied" : hex}
+              </span>
+            </button>
           );
         })}
-        <button
-          type="button"
-          onClick={handleFavorite}
-          disabled={isPending || !paletteId}
-          className={`
-            flex items-center justify-center
-            w-14 h-14
-            rounded-full
-            border
-            transition-all duration-200
-
-            ${
-              isFavorite
-                ? "bg-red-50 border-red-200 text-red-500"
-                : "bg-white border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-200 hover:bg-red-50"
-            }
-
-            ${isPending ? "opacity-50 cursor-wait" : "active:scale-95"}
-
-            disabled:cursor-not-allowed
-          `}
-          aria-label={
-            isFavorite
-              ? "Retirer la palette des favoris"
-              : "Ajouter la palette aux favoris"
-          }
-          title={
-            isPending
-              ? "Modification en cours..."
-              : isFavorite
-              ? "Retirer des favoris"
-              : "Ajouter aux favoris"
-          }
-        >
-          <Heart
-            size={30}
-            strokeWidth={2}
-            fill={isFavorite ? "currentColor" : "none"}
-          />
-        </button>
       </div>
     </div>
   );

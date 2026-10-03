@@ -78,47 +78,69 @@ function ColorPickSection() {
   if (!palette) return null;
 
   return (
-    <div className="w-full flex flex-col items-center gap-8">
-      <div
-        ref={wrapperRef}
-        className="relative inline-block select-none"
-        onMouseMove={handleMove}
-        onMouseUp={handleUp}
-        onMouseLeave={handleUp}
-        onTouchMove={handleMove}
-        onTouchEnd={handleUp}
-      >
-        <img
-          src={preview}
-          onLoad={drawImageOnCanvas}
-          className="block max-h-[400px] max-w-full rounded-4xl object-contain"
-        />
-
-        {Object.entries(positions).map(([name, pos]) => {
-          const rgb = customPalette?.[name]?.rgb;
-          if (!rgb) return null;
-          return (
-            <div
-              key={name}
-              onMouseDown={handleDown(name)}
-              onTouchStart={handleDown(name)}
-              className="absolute rounded-full border-2 border-white shadow-md cursor-grab"
-              style={{
-                width: DOT_SIZE,
-                height: DOT_SIZE,
-                left: `${pos.x}%`,
-                top: `${pos.y}%`,
-                transform: "translate(-50%, -50%)",
-                backgroundColor: `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.85)`,
-              }}
-            />
-          );
-        })}
-
-        <canvas ref={canvasRef} className="hidden" />
+    <section className="flex flex-col gap-8 rounded-3xl border border-stone-200 bg-white p-5 shadow-sm md:p-8">
+      <div className="flex flex-col gap-1">
+        <h2 className="text-xl font-semibold tracking-tight">
+          2. Pick colors by hand
+        </h2>
+        <p className="text-sm text-stone-500">
+          Drag the dots over your image. Each dot samples the color underneath
+          it.
+        </p>
       </div>
-      {customPalette && <PaletteSection palette={customPalette} />}
-    </div>
+
+      <div className="flex w-full justify-center rounded-2xl bg-stone-100 p-3 md:p-6">
+        <div
+          ref={wrapperRef}
+          className="relative inline-block select-none"
+          onMouseMove={handleMove}
+          onMouseUp={handleUp}
+          onMouseLeave={handleUp}
+          onTouchMove={handleMove}
+          onTouchEnd={handleUp}
+        >
+          <img
+            src={preview}
+            alt="Uploaded image to sample colors from"
+            onLoad={drawImageOnCanvas}
+            className="block max-h-[420px] max-w-full rounded-xl object-contain"
+          />
+
+          {Object.entries(positions).map(([name, pos]) => {
+            const rgb = customPalette?.[name]?.rgb;
+            if (!rgb) return null;
+            return (
+              <div
+                key={name}
+                onMouseDown={handleDown(name)}
+                onTouchStart={handleDown(name)}
+                className="absolute cursor-grab touch-none rounded-full border-[3px] border-white shadow-lg ring-1 ring-black/20 transition-transform hover:scale-110 active:cursor-grabbing active:scale-125"
+                style={{
+                  width: DOT_SIZE,
+                  height: DOT_SIZE,
+                  left: `${pos.x}%`,
+                  top: `${pos.y}%`,
+                  transform: "translate(-50%, -50%)",
+                  backgroundColor: `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`,
+                }}
+              />
+            );
+          })}
+
+          <canvas ref={canvasRef} className="hidden" />
+        </div>
+      </div>
+
+      {customPalette && (
+        <div className="border-t border-stone-200 pt-8">
+          <PaletteSection
+            palette={customPalette}
+            title="Your picked palette"
+            showFavorite={false}
+          />
+        </div>
+      )}
+    </section>
   );
 }
 
