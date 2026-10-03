@@ -2,22 +2,23 @@ export const runtime = "nodejs";
 
 import Palette from "@/db/models/Palette";
 import User from "@/db/models/User";
+import History from "@/db/models/History";
 
 import { connectDB } from "@/db/mongodb";
 import { auth } from "@/lib/auth";
 
 import { Vibrant } from "node-vibrant/node";
 
+const MAX_HISTORY = 10;
+
 export async function POST(request) {
-  const session = await auth();
-
   try {
-    const formData = await request.formData();
+    const session = await auth();
 
+    const formData = await request.formData();
     const uploadedFile = formData.get("imageUpload");
 
     const arrayBuffer = await uploadedFile.arrayBuffer();
-
     const buffer = Buffer.from(arrayBuffer);
 
     const palette = await Vibrant.from(buffer).getPalette();
@@ -33,15 +34,12 @@ export async function POST(request) {
       }
     }
 
-    // ID de la palette créée en base de données
     let savedPalette = null;
 
-    if (session) {
+    if (session?.user?.id) {
       await connectDB();
 
-      const userExist = await User.findOne({
-        email: session.user.email,
-      });
+      const userExist = await User.findById(session.user.id);
 
       if (userExist) {
         const colors = Object.values(cleanPalette).map((swatch) => {
@@ -52,11 +50,26 @@ export async function POST(request) {
             .join("")}`;
         });
 
-        // On récupère la palette créée
         savedPalette = await Palette.create({
           colors: colors,
           ownerId: userExist._id,
         });
+
+        // Ajout dans l'historique
+        await History.create({
+          userId: userExist._id,
+          paletteId: savedPalette._id,
+        });
+
+        // Garder seulement les 10 plus récentes
+        const old = await History.find({ userId: userExist._id })
+          .sort({ createdAt: -1 })
+          .skip(MAX_HISTORY)
+          .select("_id");
+
+        if (old.length) {
+          await History.deleteMany({ _id: { $in: old.map((h) => h._id) } });
+        }
       }
     }
 
@@ -65,8 +78,6 @@ export async function POST(request) {
       message: "Receiving POST request",
       file: uploadedFile.name,
       palette: cleanPalette,
-
-      // On renvoie l'ID au frontend
       paletteId: savedPalette?._id?.toString() || null,
     });
   } catch (err) {

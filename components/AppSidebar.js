@@ -19,7 +19,7 @@ import {
 
 const navItems = [
   { title: "Home", url: "/dashboard", icon: Home },
-  { title: "History", url: "/history", icon: History },
+  { title: "History", url: "/dashboard/history", icon: History },
   { title: "Favorites", url: "/dashboard/favorite", icon: Heart },
   { title: "Settings", url: "/settings", icon: Settings },
 ];

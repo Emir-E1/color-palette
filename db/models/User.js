@@ -27,14 +27,10 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
-    age: {
-      type: Number,
-      required: false,
-    },
-
     image: {
       type: String,
     },
+
     favorites: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -13,11 +13,9 @@ export default function FavoritesList({ favorites }) {
       const result = await favoriteAction(paletteId);
 
       if (!result?.success) {
-        console.error(result?.error || "Impossible de supprimer le favori.");
+        console.error(result?.error || "Unable to delete favorite.");
         return;
       }
-
-      window.location.reload();
     });
   };
 
