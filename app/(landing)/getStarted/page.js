@@ -13,7 +13,7 @@ export default async function Page() {
   const palettes = await Palette.aggregate([{ $sample: { size: 5 } }]);
   const colors = palettes.map(({ colors }) => colors);
   return (
-    <div className="w-full flex flex-col justify-center gap-8">
+    <div className="w-full flex flex-col justify-center gap-5">
       <NavBar />
 
       <Hero />

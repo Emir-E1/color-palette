@@ -1,37 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ColorScan
+
+ColorScan is a fullstack web app that generates a color palette from any picture you upload. You can tweak the result until it fits what you want, save your favorite palettes to your account, and browse your recent history.
+
+Uploaded pictures are never stored. Each image is processed on the fly by the API using `node-vibrant`, and only the resulting colors are kept.
+
+![Hero](public/demo/hero.png)
+
+## Features
+
+- Generate a palette from an uploaded image
+- Edit the generated colors to get the exact result you want
+- Authentication with Google, email and password, or as a guest
+- Favorites section to keep the palettes you like (registered users only)
+- History of recent palettes, which are also shown randomly in the hero section
+- Protected dashboard routes
+
+## Screenshots
+
+### Login
+
+![Login](public/demo/login.png)
+
+### Dashboard
+
+![Dashboard](public/demo/dashboard.png)
+
+### Favorites
+
+![Favorites](public/demo/favorites.png)
+
+### History
+
+![History](public/demo/history.png)
+
+## Tech Stack
+
+- Next.js 15 (App Router, Server Actions, Route Handlers)
+- React 19
+- MongoDB with Mongoose
+- NextAuth v5 (Google and Credentials providers)
+- Tailwind CSS 4 and shadcn/ui
+- node-vibrant for color extraction
+- bcryptjs for password hashing
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18 or later
+- A MongoDB database (local or Atlas)
+- A Google OAuth client (for Google sign in)
+
+### Installation
+
+```bash
+git clone https://github.com/emir-e1/<repository-name>.git
+cd <repository-name>
+npm install
+```
+
+### Environment variables
+
+Create a `.env.local` file at the root of the project:
+
+```env
+MONGODB_URL=your_mongodb_connection_string
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+AUTH_SECRET=a_long_random_string
+```
+
+You can generate `AUTH_SECRET` with:
+
+```bash
+npx auth secret
+```
+
+### Run the app
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+  (landing)/        Public pages (get started, login)
+  api/colorscan/    Auth, upload and users endpoints
+  dashboard/        Protected area (favorites, history, settings)
+components/         UI components
+db/                 Mongoose connection and models
+lib/                Auth config, server actions, helpers
+middleware.js       Dashboard route protection
+```
 
-## Learn More
+## Authentication
 
-To learn more about Next.js, take a look at the following resources:
+Three ways to use the app:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Google**: sign in with a Google account
+- **Credentials**: register with an email and a password (hashed with bcrypt)
+- **Guest**: enter a name and start right away. The guest session lasts 2 hours and guests cannot save favorites
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes
 
-## Deploy on Vercel
+- Palette history entries are automatically removed after 10 hours (MongoDB TTL index)
+- Images are processed in memory and are never written to disk or to the database
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Author
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# color-pallet
+E1lusion
+GitHub: [emir-e1](https://github.com/emir-e1)
