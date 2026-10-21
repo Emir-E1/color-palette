@@ -35,10 +35,10 @@ export default function NavBar() {
           </Link>
 
           <Link
-            href="/dashboard"
+            href="/login?mode=signup"
             className="rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white"
           >
-            Get Started for Free
+            Sign Up for Free
           </Link>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { cn } from "cn";
 
@@ -15,11 +15,16 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { registerAction, signInAction, guestAction } from "@/lib/action";
+import { useSearchParams } from "next/navigation";
 
 export function LoginForm({ className, ...props }) {
-  const [isSignUp, setIsSignUp] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
-
+  const queryParams = useSearchParams();
+  const query = queryParams.get("mode");
+  const [isSignUp, setIsSignUp] = useState(query === "signup");
+  useEffect(() => {
+    setIsSignUp(query === "signup");
+  }, [query]);
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden backdrop-blur-3xl p-0">

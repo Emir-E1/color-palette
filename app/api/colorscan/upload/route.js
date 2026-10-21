@@ -55,13 +55,11 @@ export async function POST(request) {
           ownerId: userExist._id,
         });
 
-        // Ajout dans l'historique
         await History.create({
           userId: userExist._id,
           paletteId: savedPalette._id,
         });
 
-        // Garder seulement les 10 plus récentes
         const old = await History.find({ userId: userExist._id })
           .sort({ createdAt: -1 })
           .skip(MAX_HISTORY)

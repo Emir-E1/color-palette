@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { runtime } from "./app/api/colorscan/upload/route";
 
 export async function middleware(req) {
-  const session = await auth(); // usage 1, celui que tu connais
+  const session = await auth();
   const hasGuest = !!req.cookies.get("guestId")?.value;
 
   if (!session && !hasGuest) {

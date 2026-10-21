@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useOptimistic, useState, useTransition } from "react";
 import { Check, Copy, Heart } from "lucide-react";
 
 import { rgbToHex } from "@/_utils/rgbToHex";
 import { favoriteAction } from "@/lib/action";
 
-// Lisible sur n'importe quelle couleur : icône sombre sur fond clair, claire sur fond foncé
 const isLight = ([r, g, b]) => (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.6;
 
 function PaletteSection({
@@ -16,8 +15,15 @@ function PaletteSection({
   title = "Dominant palette",
   showFavorite = true,
 }) {
-  const [copied, setCopied] = useState(null);
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+
+  // Valeur explicite : pas de clignotement quand le state serveur arrive
+  const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(
+    isFavorite,
+    (_current, next) => next
+  );
+
+  const [copied, setCopied] = useState(null);
   const [error, setError] = useState(null);
   const [isPending, startTransition] = useTransition();
 
@@ -34,24 +40,30 @@ function PaletteSection({
       await navigator.clipboard.writeText(hex);
       setCopied(name);
       setTimeout(() => setCopied(null), 1500);
-    } catch (error) {
-      console.error("Impossible de copier la couleur :", error);
+    } catch (err) {
+      console.error("Impossible de copier la couleur :", err);
     }
   };
 
   const handleFavorite = () => {
     if (!paletteId || isPending) return;
+
     setError(null);
+
     startTransition(async () => {
+      setOptimisticFavorite(!isFavorite);
+
       try {
         const result = await favoriteAction(paletteId);
+
         if (!result?.success) {
           setError(result?.error || "Impossible de modifier les favoris.");
           return;
         }
+
         setIsFavorite(result.isFavorite);
-      } catch (error) {
-        console.error("Favorite error:", error);
+      } catch (err) {
+        console.error("Favorite error:", err);
         setError("Une erreur est survenue.");
       }
     });
@@ -72,18 +84,21 @@ function PaletteSection({
             type="button"
             onClick={handleFavorite}
             disabled={isPending || !paletteId}
-            aria-pressed={isFavorite}
+            aria-pressed={optimisticFavorite}
             className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition
               focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900
               disabled:cursor-not-allowed disabled:opacity-50
               ${
-                isFavorite
+                optimisticFavorite
                   ? "border-red-200 bg-red-50 text-red-600"
                   : "border-stone-300 bg-white text-stone-700 hover:border-stone-400 hover:bg-stone-50"
               }`}
           >
-            <Heart size={16} fill={isFavorite ? "currentColor" : "none"} />
-            {isPending ? "Saving…" : isFavorite ? "Saved" : "Save palette"}
+            <Heart
+              size={16}
+              fill={optimisticFavorite ? "currentColor" : "none"}
+            />
+            {optimisticFavorite ? "Saved" : "Save palette"}
           </button>
         )}
       </div>
@@ -97,13 +112,13 @@ function PaletteSection({
         </p>
       )}
 
-      {/* Les couleurs forment une seule bande : c'est l'élément fort de la page */}
       <div className="flex w-full">
         {swatches.map(([name, swatch], i) => {
           const [r, g, b] = swatch.rgb;
           const hex = rgbToHex(r, g, b);
           const light = isLight(swatch.rgb);
           const isCopied = copied === name;
+
           const radius =
             (i === 0 ? "rounded-l-2xl " : "") +
             (i === swatches.length - 1 ? "rounded-r-2xl" : "");
@@ -133,6 +148,7 @@ function PaletteSection({
                   {isCopied ? <Check size={14} /> : <Copy size={14} />}
                 </span>
               </span>
+
               <span className="truncate text-center text-xs font-medium tabular-nums text-stone-600 md:text-sm">
                 {isCopied ? "Copied" : hex}
               </span>
