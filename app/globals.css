@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:where(.dark, .dark *));
 :root {
   --primary: #d32d5a;
   --secondary: rgb(61, 61, 61);
@@ -145,4 +145,18 @@
     background: var(--primary);
     color: #ffffff;
   }
+}
+html.dark {
+  --background: #111114;
+  --foreground: #f4f4f5;
+  --secondary: #b4b4be;
+  --marketing: #21141a;
+  --primary: #f06a8d;
+
+  --sidebar: #18181b;
+  --sidebar-foreground: #d4d4d8;
+  --sidebar-border: #3f3f46;
+  --sidebar-accent: #27272a;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-ring: #6b263b;
 }

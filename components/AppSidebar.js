@@ -21,7 +21,7 @@ const navItems = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "History", url: "/dashboard/history", icon: History },
   { title: "Favorites", url: "/dashboard/favorite", icon: Heart },
-  { title: "Settings", url: "/settings", icon: Settings },
+  { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
 
 function AppSidebar({ session }) {
@@ -71,7 +71,7 @@ function AppSidebar({ session }) {
       <SidebarFooter className="border-t border-stone-200 p-5">
         <div className="flex items-center gap-3.5">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-stone-200 text-sm font-semibold uppercase text-stone-700">
-            {name?.[0] ?? "?"}
+            <img src={session.user.image} className="rounded-full" />
           </span>
           <span className="truncate text-base font-medium text-stone-700">
             {name ?? "Guest"}
