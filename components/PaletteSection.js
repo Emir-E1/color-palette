@@ -14,13 +14,14 @@ function PaletteSection({
   initialIsFavorite = false,
   title = "Dominant palette",
   showFavorite = true,
+  onSavePalette,
 }) {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
+  const [currentPaletteId, setCurrentPaletteId] = useState(paletteId ?? null);
 
-  // Valeur explicite : pas de clignotement quand le state serveur arrive
   const [optimisticFavorite, setOptimisticFavorite] = useOptimistic(
     isFavorite,
-    (_current, next) => next
+    (_, next) => next
   );
 
   const [copied, setCopied] = useState(null);
@@ -29,6 +30,7 @@ function PaletteSection({
 
   useEffect(() => {
     setIsFavorite(initialIsFavorite);
+    setCurrentPaletteId(paletteId ?? null);
   }, [initialIsFavorite, paletteId]);
 
   if (!palette) return null;
@@ -46,15 +48,36 @@ function PaletteSection({
   };
 
   const handleFavorite = () => {
-    if (!paletteId || isPending) return;
+    if (isPending) return;
 
     setError(null);
 
     startTransition(async () => {
-      setOptimisticFavorite(!isFavorite);
+      const nextFavorite = !isFavorite;
+      setOptimisticFavorite(nextFavorite);
 
       try {
-        const result = await favoriteAction(paletteId);
+        let id = currentPaletteId;
+
+        // Custom palette: save it on the first click
+        if (!id && nextFavorite && onSavePalette) {
+          const saved = await onSavePalette();
+
+          if (!saved?.success || !saved?.paletteId) {
+            setError(saved?.error || "Impossible de sauvegarder la palette.");
+            return;
+          }
+
+          id = saved.paletteId;
+          setCurrentPaletteId(id);
+        }
+
+        if (!id) {
+          setError("Palette introuvable.");
+          return;
+        }
+
+        const result = await favoriteAction(id);
 
         if (!result?.success) {
           setError(result?.error || "Impossible de modifier les favoris.");
@@ -74,6 +97,7 @@ function PaletteSection({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-col gap-0.5">
           <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
+
           <p className="text-sm text-stone-500">
             Click a color to copy its hex code.
           </p>
@@ -83,7 +107,7 @@ function PaletteSection({
           <button
             type="button"
             onClick={handleFavorite}
-            disabled={isPending || !paletteId}
+            disabled={isPending || (!currentPaletteId && !onSavePalette)}
             aria-pressed={optimisticFavorite}
             className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition
               focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900
@@ -98,7 +122,12 @@ function PaletteSection({
               size={16}
               fill={optimisticFavorite ? "currentColor" : "none"}
             />
-            {optimisticFavorite ? "Saved" : "Save palette"}
+
+            {isPending
+              ? "Saving..."
+              : optimisticFavorite
+              ? "Saved"
+              : "Save palette"}
           </button>
         )}
       </div>

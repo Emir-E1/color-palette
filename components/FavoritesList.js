@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { favoriteAction } from "@/lib/action";
+import { Trash } from "lucide-react";
 
 export default function FavoritesList({ favorites }) {
   const [isPending, startTransition] = useTransition();
@@ -52,7 +53,7 @@ export default function FavoritesList({ favorites }) {
                 disabled={isPending}
                 className="text-red-500 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isPending ? "Deleting..." : "Delete"}
+                {isPending ? "Deleting..." : <Trash />}
               </button>
             </div>
 
