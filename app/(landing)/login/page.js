@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/login-form";
+import { Suspense } from "react";
 
 function Page() {
   return (
@@ -27,8 +28,9 @@ function Page() {
             </div>
           </div>
         </div>
-
-        <LoginForm />
+        <Suspense fallback={<div>Loading...</div>}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );
