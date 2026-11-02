@@ -1,8 +1,9 @@
 "use client";
 
-import { CloudUpload, Sun, Moon } from "lucide-react";
+import { CloudUpload, Sun, Moon, LogOut } from "lucide-react";
 import { SidebarTrigger } from "./ui/sidebar";
 import { useEffect, useState } from "react";
+import { signOutAction } from "@/lib/action";
 
 function Header() {
   const [dark, setDark] = useState(false);
@@ -44,9 +45,12 @@ function Header() {
           )}
         </button>
 
-        <button className="flex items-center gap-2 rounded-xl border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800">
-          <CloudUpload size={18} className="text-primary" />
-          Upload image
+        <button
+          className="flex items-center gap-2 rounded-xl border border-stone-300 px-4 py-2 text-sm font-medium text-stone-700 hover:bg-stone-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          onClick={() => signOutAction()}
+        >
+          <LogOut size={18} className="text-primary" />
+          Sign Out
         </button>
       </div>
     </header>

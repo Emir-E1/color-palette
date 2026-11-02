@@ -3,7 +3,7 @@ import Logo from "./Logo";
 const links = [
   { label: "Features", href: "#features" },
   { label: "About the World", href: "#about" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "How it works", href: "#how-it-works" },
 ];
 
 export default function NavBar() {

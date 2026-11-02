@@ -1,9 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { cn } from "cn";
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -13,8 +11,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-
-import { registerAction, signInAction, guestAction } from "@/lib/action";
+import {
+  registerAction,
+  loginAction,
+  signInAction,
+  guestAction,
+} from "@/lib/action";
 import { useSearchParams } from "next/navigation";
 
 export function LoginForm({ className, ...props }) {
@@ -22,16 +24,20 @@ export function LoginForm({ className, ...props }) {
   const queryParams = useSearchParams();
   const query = queryParams.get("mode");
   const [isSignUp, setIsSignUp] = useState(query === "signup");
+
   useEffect(() => {
     setIsSignUp(query === "signup");
   }, [query]);
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden backdrop-blur-3xl p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form
             className="p-8 md:p-12"
-            action={isGuest ? guestAction : registerAction}
+            action={
+              isGuest ? guestAction : isSignUp ? registerAction : loginAction
+            }
           >
             <FieldGroup className="gap-6">
               {/* Header */}
@@ -43,7 +49,6 @@ export function LoginForm({ className, ...props }) {
                     ? "Create account"
                     : "Welcome back"}
                 </h1>
-
                 <p className="text-balance text-muted-foreground">
                   {isGuest
                     ? "Try Palette without creating an account"
@@ -60,7 +65,6 @@ export function LoginForm({ className, ...props }) {
                     <FieldLabel htmlFor="guestName">
                       Choose a username
                     </FieldLabel>
-
                     <Input
                       id="guestName"
                       name="name"
@@ -69,13 +73,11 @@ export function LoginForm({ className, ...props }) {
                       required
                     />
                   </Field>
-
                   <Field>
                     <Button type="submit" className="h-11 w-full text-base">
                       Continue as guest
                     </Button>
                   </Field>
-
                   <FieldDescription className="text-center">
                     Want to create an account?{" "}
                     <button
@@ -93,7 +95,6 @@ export function LoginForm({ className, ...props }) {
                   {isSignUp && (
                     <Field>
                       <FieldLabel htmlFor="name">Full Name</FieldLabel>
-
                       <Input
                         id="name"
                         name="name"
@@ -107,12 +108,11 @@ export function LoginForm({ className, ...props }) {
                   {/* EMAIL */}
                   <Field>
                     <FieldLabel htmlFor="email">Email</FieldLabel>
-
                     <Input
                       id="email"
                       name="email"
                       type="email"
-                      placeholder="m@example.com"
+                      placeholder="demo@demo.com"
                       className="h-11"
                       required
                     />
@@ -122,7 +122,6 @@ export function LoginForm({ className, ...props }) {
                   <Field>
                     <div className="flex items-center justify-between">
                       <FieldLabel htmlFor="password">Password</FieldLabel>
-
                       {!isSignUp && (
                         <a
                           href="#"
@@ -132,10 +131,10 @@ export function LoginForm({ className, ...props }) {
                         </a>
                       )}
                     </div>
-
                     <Input
                       id="password"
                       name="password"
+                      placeholder="demo"
                       type="password"
                       className="h-11"
                       required
@@ -165,11 +164,10 @@ export function LoginForm({ className, ...props }) {
                         viewBox="0 0 24 24"
                       >
                         <path
-                          d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867.0.307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+                          d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
                           fill="currentColor"
                         />
                       </svg>
-
                       <span>
                         {isSignUp ? "Sign up with Google" : "Login with Google"}
                       </span>
@@ -216,10 +214,10 @@ export function LoginForm({ className, ...props }) {
           </div>
         </CardContent>
       </Card>
-
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        By continuing, you acknowledge that your account information is
+        processed to provide ColorScan. Learn more in our{" "}
+        <a href="/privacy">Privacy Policy</a>.
       </FieldDescription>
     </div>
   );
